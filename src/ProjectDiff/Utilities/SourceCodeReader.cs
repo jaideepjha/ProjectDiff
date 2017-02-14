@@ -10,17 +10,23 @@ namespace ProjectDiff.Utilities
     public class SourceCodeReader
     {
         private readonly List<string> _sourceFiles = new List<string>();
-        //private readonly List<string> _csHtmlFilesList = new List<string>();
+        private readonly List<string> _csHtmlFilesList = new List<string>();
         // public string projectNameSpace { get; set; }
 
         public List<string> SourceFiles
         {
             get { return _sourceFiles; }
         }
+        public List<string> CsHtmlFilesList
+        {
+            get { return _csHtmlFilesList; }
+        }
+
 
         public SourceCodeReader(string projectFile)
         {
             _sourceFiles = LocateSourceFiles(projectFile);
+            _csHtmlFilesList = LocateCshtmlFiles(projectFile);
         }
 
         public SourceCodeReader(List<string> projectFile)
@@ -32,18 +38,26 @@ namespace ProjectDiff.Utilities
         }
         private List<string> LocateSourceFiles(string projectFile)
         {
-            var path = GetDirectory(projectFile);
+            var sourceFiles = new List<string>();
+            var path = Path.GetDirectoryName(projectFile);//GetDirectory(projectFile);
+            if (projectFile.EndsWith("xproj"))
+            {
+                sourceFiles = RetrieveFiles.GetFiles(path);   
+            }
+            else
+            {
 
-            var projectDefinition = XDocument.Load(projectFile);
+                var projectDefinition = XDocument.Load(projectFile);
 
-            //projectNameSpace = projectDefinition.Descendants()
-            //    .Where(n => n.Name.LocalName.Equals("RootNamespace"))
-            //    .Select(n => n.Value).First();
+                //projectNameSpace = projectDefinition.Descendants()
+                //    .Where(n => n.Name.LocalName.Equals("RootNamespace"))
+                //    .Select(n => n.Value).First();
 
-            var sourceFiles = projectDefinition.Descendants()
-                .Where(n => n.Name.LocalName.Equals("Compile"))
-                .Select(n => String.Format("{0}\\{1}", path, n.Attribute("Include").Value))
-                .ToList();
+                 sourceFiles = projectDefinition.Descendants()
+                    .Where(n => n.Name.LocalName.Equals("Compile"))
+                    .Select(n => String.Format("{0}\\{1}", path, n.Attribute("Include").Value))
+                    .ToList();
+            }
 
             return sourceFiles;
         }

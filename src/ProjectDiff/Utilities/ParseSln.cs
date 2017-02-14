@@ -94,25 +94,38 @@ namespace ProjectDiff.Utilities
             return p;
         }
 
-        public static List<string> GetProjects(bool includeWeb = true, string slnpath = @"D:\Projects\CPF\CPF-Codebase\Dev-I4\Src\eServices\Application\CPF.eServices.Application.sln")
+        public static List<string> GetProjects(string slnpath)
         {
-            List<string> s = new List<string>();
-            s = GetProjectFiltered(includeWeb, slnpath);
-            List<string> res = new List<string>();
-            //var t = new List<string>();
-            if (includeWeb)
+            List<string> p = new List<string>();
+            try
             {
-                var tr = s.Where(item => item.Contains("Web") && !item.Contains("Test"));
-                foreach (string r1 in tr)
+                Solution s = new Solution(slnpath);
+                foreach (var proj in s.GetProjects())
                 {
-                    res.Add(r1);
+                    p.Add(Path.Combine(Path.GetDirectoryName(slnpath), proj.RelativePath));
                 }
             }
-            else
+            catch (Exception ex)
             {
-                res = s;
+                Console.WriteLine("Error: " + ex.Message);
             }
-            return res;
+            return p;
+            //s = GetProjectFiltered(includeWeb, slnpath);
+            //List<string> res = new List<string>();
+            ////var t = new List<string>();
+            //if (includeWeb)
+            //{
+            //    var tr = s.Where(item => item.Contains("Web") && !item.Contains("Test"));
+            //    foreach (string r1 in tr)
+            //    {
+            //        res.Add(r1);
+            //    }
+            //}
+            //else
+            //{
+            //    res = s;
+            //}
+            //return res;
         }
 
         public static List<string> GetFilteredProjects(string solutionFile, string projectFolderFilter)

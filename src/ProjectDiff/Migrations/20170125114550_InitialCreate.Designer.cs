@@ -8,9 +8,10 @@ using ProjectDiff.Entities;
 namespace ProjectDiff.Migrations
 {
     [DbContext(typeof(ProjDiffDBContext))]
-    partial class ProjDiffDBContextModelSnapshot : ModelSnapshot
+    [Migration("20170125114550_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
                 .HasAnnotation("ProductVersion", "1.0.1");
